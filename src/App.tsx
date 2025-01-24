@@ -1,13 +1,12 @@
-import React from "react";
+import { RouterProvider } from "react-router-dom";
 import GlobalStyle from "./styles/GlobalStyle";
+import Router from "./configs/router.config";
 
 function App() {
   return (
     <>
       <GlobalStyle />
-      <div>
-        <h1>Welcome to Stardew Quiz!</h1>
-      </div>
+      <RouterProvider router={Router} />
     </>
   );
 }
