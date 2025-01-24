@@ -1,8 +1,9 @@
 import { Timestamp } from "firebase/firestore";
 
 export interface Category {
-  id: string;
-  name: string;
+  farming: string;
+  fishing: string;
+  mining: string;
 }
 export interface Score {
   score: number;
@@ -35,4 +36,16 @@ export interface Stats {
       lastUpdated: Timestamp;
     };
   };
+}
+
+export interface TempQuiz {
+  id: string;
+  user: string;
+  status: string;
+  categoryId: string;
+  quiz: string;
+  answer: string;
+  description: string;
+  src: string;
+  alt: string;
 }

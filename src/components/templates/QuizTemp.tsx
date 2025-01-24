@@ -4,6 +4,9 @@ import Progress from "../atoms/Progress";
 import QuizSection from "../organisms/QuizSection";
 import Layout from "./Layout";
 import ScoreCard from "../molecules/ScoreCard";
+import Button from "../atoms/Button";
+import { getAuth } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 interface QuizTempProps {
   currentCategory: string;
@@ -16,7 +19,8 @@ const QuizTemp = ({ currentCategory, quiz, total }: QuizTempProps) => {
   const [score, setScore] = useState(0); // 점수 상태
   const [selectedAnswer, setSelectedAnswer] = useState<string>(""); // 선택된 답
   const [isScoreCardVisible, setIsScoreCardVisible] = useState(false); // ScoreCard 표시 여부
-
+  const auth = getAuth();
+  const navigate = useNavigate();
   const handleClickNext: MouseEventHandler = (e) => {
     e.preventDefault();
 
@@ -39,6 +43,31 @@ const QuizTemp = ({ currentCategory, quiz, total }: QuizTempProps) => {
     setSelectedAnswer(answer); // 사용자가 선택한 답
   };
 
+  if (total == 0) {
+    return (
+      <Layout>
+        <h3>{currentCategory}</h3>
+        <p>준비된 문제가 없어요ㅠㅠ</p>
+        {auth.currentUser ? (
+          <Button
+            onClick={() => {
+              navigate("/new");
+            }}
+          >
+            문제 추가하기
+          </Button>
+        ) : (
+          <Button
+            onClick={() => {
+              navigate("/");
+            }}
+          >
+            로그인하고 문제 추가하기
+          </Button>
+        )}
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <h3>{currentCategory}</h3>

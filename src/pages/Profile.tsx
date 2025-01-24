@@ -5,11 +5,12 @@ import Img from "../components/atoms/Img";
 import { useNavigate } from "react-router-dom";
 import StatCard from "../components/molecules/StatCard";
 import useStat from "../hooks/useStat";
+import useAdmin from "../hooks/useAdmin";
 
 const ProfilePage = () => {
   const user = getAuth();
   const stats = useStat(user.currentUser?.uid);
-
+  const isAdmin = useAdmin();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -37,6 +38,17 @@ const ProfilePage = () => {
       >
         New Quiz
       </Button>
+      {isAdmin && (
+        <Button
+          onClick={() => {
+            navigate("/admin", {
+              state: isAdmin,
+            });
+          }}
+        >
+          Admin
+        </Button>
+      )}
     </Layout>
   );
 };

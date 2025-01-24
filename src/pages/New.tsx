@@ -10,6 +10,7 @@ const NewQuizPage = () => {
   const user = auth.currentUser;
 
   const [formData, setFormData] = useState({
+    id: "",
     categoryId: "",
     quiz: "",
     answer: "",
@@ -52,18 +53,17 @@ const NewQuizPage = () => {
       console.error("사용자가 인증되지 않았습니다.");
       return setError("로그인 후 다시 시도해주세요.");
     }
+    const id = `${user.uid}-${Date.now()}`;
     const newQuiz = {
       ...formData,
+      user: user.email,
+      id,
       userId: user.uid,
       createdAt: Timestamp.now(),
     };
 
     try {
-      const docRef = doc(
-        collection(db, "tempQuiz"),
-        `${user.uid}-${Date.now()}`
-      );
-      console.log(docRef);
+      const docRef = doc(collection(db, "tempQuiz"), id);
       await setDoc(docRef, newQuiz);
       navigate("/profile"); // Redirect to profile or another page after submission
     } catch (error) {

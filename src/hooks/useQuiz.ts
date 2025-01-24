@@ -1,5 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
-import { collection, getDocs, query, where, addDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  addDoc,
+  doc,
+  getDoc,
+} from "firebase/firestore";
 import { useLanguage } from "../context/LanguageContext"; // 언어 컨텍스트 가져오기
 import { db } from "../firebase.config";
 import { Quiz } from "../types";
@@ -22,16 +30,18 @@ const useQuiz = (categoryId: string, random?: boolean) => {
   // 특정 카테고리 ID로 최대 10개의 퀴즈를 랜덤하게 가져오기
   const getQuizByCategoryId = async (categoryId: string) => {
     try {
-      const querySnapshot = await getDocs(collection(db, "quiz"));
-      const fetchedQuizzes = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return data[language];
-      });
+      const langDocRef = doc(collection(db, "quiz"), language);
+      const langDoc = await getDoc(langDocRef);
 
+      const data = langDoc.data();
+      if (!data || data.length === 0) {
+        console.log(`No data found for category: ${categoryId}`);
+        return [];
+      }
       // 가져온 퀴즈 중에서 최대 10개를 랜덤하게 선택
-      const shuffledQuizzes = fetchedQuizzes.sort(() => Math.random() - 0.5);
+      const shuffledQuizzes = data[categoryId].sort(() => Math.random() - 0.5);
       const limitedQuizzes = shuffledQuizzes.slice(0, 10);
-      setQuiz(limitedQuizzes[0][categoryId]);
+      setQuiz(limitedQuizzes);
       return limitedQuizzes;
     } catch (error) {
       setError((error as Error).message);

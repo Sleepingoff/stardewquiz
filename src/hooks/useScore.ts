@@ -12,7 +12,7 @@ import { Category, Score } from "../types";
 const useScore = () => {
   const initializeUserCategories = async (
     userId: string,
-    categories: Category[]
+    categories: Category
   ) => {
     const userScoreRef = doc(db, "scores", userId);
 
@@ -25,9 +25,9 @@ const useScore = () => {
         // 초기화가 필요한 카테고리를 확인
         const updates: Record<string, { latest: Timestamp; history: Score[] }> =
           {};
-        categories.forEach((category) => {
-          if (!userData.categories?.[category.id]) {
-            updates[`categories.${category.id}`] = {
+        Object.keys(categories).forEach((category) => {
+          if (!userData.categories?.[category]) {
+            updates[`categories.${category}`] = {
               latest: Timestamp.now(),
               history: [],
             };
@@ -44,9 +44,9 @@ const useScore = () => {
       } else {
         // 문서가 없으면 초기 데이터 생성
         const initialData = {
-          categories: categories.reduce(
+          categories: Object.keys(categories).reduce(
             (acc, category) => {
-              acc[category.id] = { latest: Timestamp.now(), history: [] };
+              acc[category] = { latest: Timestamp.now(), history: [] };
               return acc;
             },
             {} as Record<string, { latest: Timestamp; history: Score[] }>

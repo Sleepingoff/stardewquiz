@@ -4,16 +4,17 @@ import { useCategories } from "../../hooks/useCategories";
 import useScore from "../../hooks/useScore";
 import {
   getAuth,
-  onAuthStateChanged,
   signInWithPopup,
   GoogleAuthProvider,
+  User,
 } from "firebase/auth";
 import Button from "../atoms/Button";
 import { useLocation, useNavigate } from "react-router-dom";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase.config";
+import { useEffect } from "react";
 
 const Header = () => {
-  const user = getAuth();
-
   const { pathname } = useLocation();
 
   const { categories, loading, error } = useCategories();
@@ -35,12 +36,23 @@ const Header = () => {
       console.log("Login error:", errorMessage);
     }
   };
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // 사용자가 로그인했을 때 초기화 함수 호출
-      initializeUserCategories(user.uid, categories);
-    }
-  });
+
+  useEffect(() => {
+    if (!auth.currentUser) return;
+    const user = auth.currentUser;
+    const checkUser = async () => {
+      const userRef = doc(collection(db, "users"), user.uid); // Firestore의 `users` 컬렉션 참조
+      const result = await getDoc(userRef);
+      return !result.exists();
+    };
+
+    checkUser().then((res) => {
+      if (res) {
+        initializeUserCategories(user.uid, categories);
+        saveUserToFirestore(user);
+      }
+    });
+  }, [auth]);
 
   const handleClickConvert = () => {
     if (pathname == "/profile") navigate("/");
@@ -48,10 +60,23 @@ const Header = () => {
       navigate("/profile");
     }
   };
+  const saveUserToFirestore = async (user: User) => {
+    if (!user) return;
 
+    try {
+      const userRef = doc(collection(db, "users"), user.uid); // Firestore의 `users` 컬렉션 참조
+      await setDoc(userRef, {
+        email: user.email,
+        displayName: user.displayName || "Anonymous",
+        isAdmin: false, // 기본적으로 관리자 아님
+      });
+    } catch (error) {
+      console.error("Error saving user to Firestore:", error);
+    }
+  };
   return (
     <StyledHeader>
-      {!user ? (
+      {!auth.currentUser ? (
         <Button onClick={handleGoogleLogin}>LogIn</Button>
       ) : (
         <Button onClick={handleClickConvert}>

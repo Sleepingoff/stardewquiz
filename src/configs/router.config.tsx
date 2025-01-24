@@ -4,6 +4,7 @@ import QuizPage from "../pages/Quiz";
 import ResultPage from "../pages/Result";
 import ProfilePage from "../pages/Profile";
 import NewQuizPage from "../pages/New";
+import AdminPage from "../pages/Admin";
 
 const routes: RouteObject[] = [
   {
@@ -27,6 +28,10 @@ const routes: RouteObject[] = [
   {
     path: "/new",
     element: <NewQuizPage />,
+  },
+  {
+    path: "/admin",
+    element: <AdminPage />,
   },
 ];
 
