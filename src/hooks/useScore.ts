@@ -55,7 +55,6 @@ const useScore = () => {
         };
 
         await setDoc(userScoreRef, initialData);
-        console.log("User data initialized:", initialData);
       }
     } catch (error) {
       console.error("Error initializing user categories:", error);
@@ -70,7 +69,6 @@ const useScore = () => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         const latest = data.categories[category]?.latest || null;
-        console.log("Latest score:", latest);
         return latest;
       } else {
         console.log("No such document!");
@@ -96,7 +94,6 @@ const useScore = () => {
         [`categories.${category}.history`]: arrayUnion(newData), // 히스토리 추가
         lastUpdated: new Date().toISOString(), // 마지막 업데이트 시간 갱신
       });
-      console.log("Score updated successfully!");
     } catch (error) {
       console.error("Error updating score:", error);
     }
