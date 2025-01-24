@@ -9,11 +9,10 @@ import {
   GoogleAuthProvider,
 } from "firebase/auth";
 import Button from "../atoms/Button";
-import useAuth from "../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
-  const user = useAuth();
+  const user = getAuth();
 
   const { pathname } = useLocation();
 

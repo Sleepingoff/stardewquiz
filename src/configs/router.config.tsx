@@ -3,6 +3,7 @@ import Home from "../pages/Home";
 import QuizPage from "../pages/Quiz";
 import ResultPage from "../pages/Result";
 import ProfilePage from "../pages/Profile";
+import NewQuizPage from "../pages/New";
 
 const routes: RouteObject[] = [
   {
@@ -22,6 +23,10 @@ const routes: RouteObject[] = [
   {
     path: "/quiz/:categoryId/:id",
     element: <QuizPage />,
+  },
+  {
+    path: "/new",
+    element: <NewQuizPage />,
   },
 ];
 
