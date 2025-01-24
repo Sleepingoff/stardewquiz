@@ -2,6 +2,8 @@ import { createBrowserRouter, RouteObject } from "react-router-dom";
 import Home from "../pages/Home";
 import QuizPage from "../pages/Quiz";
 import ResultPage from "../pages/Result";
+import AuthPage from "../pages/Auth";
+import ProfilePage from "../pages/Profile";
 
 const routes: RouteObject[] = [
   {
@@ -9,12 +11,23 @@ const routes: RouteObject[] = [
     element: <Home />,
   },
   {
-    path: "/quiz/:categoryId/:id",
-    element: <QuizPage />,
+    path: "/auth",
+    element: <AuthPage />,
   },
   {
-    path: "/result/:categoryId/",
+    path: "/profile",
+    element: <ProfilePage />,
+  },
+
+  {
+    path: "/quiz/:categoryId",
     element: <ResultPage />,
+    children: [
+      {
+        path: "/quiz/:categoryId/:id",
+        element: <QuizPage />,
+      },
+    ],
   },
 ];
 
