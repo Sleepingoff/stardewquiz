@@ -1,4 +1,4 @@
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { collection, doc, getDoc, getFirestore } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Score, Stat, Stats } from "../types";
 
@@ -13,7 +13,7 @@ const useStat = (userId: string | undefined) => {
 
   const fetchUserStats = async (userId: string): Promise<Stat | null> => {
     const db = getFirestore();
-    const statsRef = doc(db, "scores", userId); // Firestore 경로 설정
+    const statsRef = doc(collection(db, "scores"), userId); // Firestore 경로 설정
     const docSnap = await getDoc(statsRef);
 
     if (!docSnap.exists()) {
@@ -31,19 +31,15 @@ const useStat = (userId: string | undefined) => {
     // 각 카테고리를 순회하며 데이터를 분석
     Object.entries(categories).forEach(
       ([category, details]: [string, { history: Score[]; latest: Score }]) => {
-        const history = details.history as Score[];
-        const highestScore = history.reduce(
-          (a, { score }) => Math.max(score, a),
-          0
-        );
+        const history = details.history;
         const categoryTotalScore = history.reduce(
-          (a, { score }) => a + score,
+          (a, { solved }) => a + solved,
           0
         );
 
         totalQuiz += history.length;
         totalScore += categoryTotalScore;
-        categoryScores[category] = highestScore; // 최고 점수 저장
+        categoryScores[category] = categoryTotalScore; // 누적 점수 저장
       }
     );
 

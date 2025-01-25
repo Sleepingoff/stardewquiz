@@ -4,6 +4,7 @@ import {
   updateDoc,
   getDoc,
   setDoc,
+  collection,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../firebase.config";
@@ -14,7 +15,7 @@ const useScore = () => {
     userId: string,
     categories: Category
   ) => {
-    const userScoreRef = doc(db, "scores", userId);
+    const userScoreRef = doc(collection(db, "scores"), userId);
 
     try {
       const userDoc = await getDoc(userScoreRef);
@@ -23,12 +24,11 @@ const useScore = () => {
         const userData = userDoc.data();
 
         // 초기화가 필요한 카테고리를 확인
-        const updates: Record<string, { latest: Timestamp; history: Score[] }> =
-          {};
+        const updates: Record<string, { latest: Score; history: Score[] }> = {};
         Object.keys(categories).forEach((category) => {
           if (!userData.categories?.[category]) {
             updates[`categories.${category}`] = {
-              latest: Timestamp.now(),
+              latest: { solved: 0, corrects: 0 },
               history: [],
             };
           }
@@ -46,12 +46,15 @@ const useScore = () => {
         const initialData = {
           categories: Object.keys(categories).reduce(
             (acc, category) => {
-              acc[category] = { latest: Timestamp.now(), history: [] };
+              acc[category] = {
+                latest: { solved: 0, corrects: 0 },
+                history: [],
+              };
               return acc;
             },
-            {} as Record<string, { latest: Timestamp; history: Score[] }>
+            {} as Record<string, { latest: Score; history: Score[] }>
           ),
-          lastUpdated: null,
+          lastUpdated: Timestamp.now(),
         };
 
         await setDoc(userScoreRef, initialData);
@@ -62,7 +65,7 @@ const useScore = () => {
   };
 
   const getUserLatestScore = async (userId: string, category: string) => {
-    const userScoreRef = doc(db, "scores", userId);
+    const userScoreRef = doc(collection(db, "scores"), userId);
 
     try {
       const docSnap = await getDoc(userScoreRef);
@@ -82,11 +85,12 @@ const useScore = () => {
   const updateUserScore = async (
     userId: string,
     category: string,
-    newScore: number
+    newScore: number,
+    total: number
   ) => {
-    const userScoreRef = doc(db, "scores", userId);
+    const userScoreRef = doc(collection(db, "scores"), userId);
 
-    const newData = { score: newScore, attempts: Date.now() };
+    const newData = { corrects: newScore, solved: total };
 
     try {
       await updateDoc(userScoreRef, {

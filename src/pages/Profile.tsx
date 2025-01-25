@@ -1,11 +1,11 @@
 import Layout from "../components/templates/Layout";
 import Button from "../components/atoms/Button";
 import { getAuth, signOut } from "firebase/auth";
-import Img from "../components/atoms/Img";
 import { useNavigate } from "react-router-dom";
 import StatCard from "../components/molecules/StatCard";
 import useStat from "../hooks/useStat";
 import useAdmin from "../hooks/useAdmin";
+import styled from "styled-components";
 
 const ProfilePage = () => {
   const user = getAuth();
@@ -26,31 +26,58 @@ const ProfilePage = () => {
   };
   return (
     <Layout>
-      <h1>Welcome, {user.currentUser?.displayName}</h1>
-      <Img src={user.currentUser?.photoURL ?? ""} alt="Profile" />
-      <p>Email: {user.currentUser?.email}</p>
-      {stats && <StatCard stats={stats} />}
-      <Button onClick={handleLogout}>Logout</Button>
-      <Button
-        onClick={() => {
-          navigate("/new");
-        }}
-      >
-        New Quiz
-      </Button>
-      {isAdmin && (
+      <StyledHgroup>
+        <div>
+          <p>Welcome, Farmer</p>
+          <h1>{user.currentUser?.displayName}</h1>
+        </div>{" "}
         <Button
           onClick={() => {
-            navigate("/admin", {
-              state: isAdmin,
-            });
+            navigate("/new");
           }}
         >
-          Admin
+          New Quiz
         </Button>
-      )}
+      </StyledHgroup>
+      <StyledSection>
+        {stats && <StatCard stats={stats} />}
+        <div>
+          {" "}
+          <Button onClick={handleLogout}>Logout</Button>
+          {isAdmin && (
+            <Button
+              onClick={() => {
+                navigate("/admin", {
+                  state: isAdmin,
+                });
+              }}
+            >
+              Admin
+            </Button>
+          )}
+        </div>
+      </StyledSection>
     </Layout>
   );
 };
 
 export default ProfilePage;
+
+const StyledHgroup = styled.hgroup`
+  display: flex;
+  & > :last-child {
+    margin: auto;
+    margin-right: 0;
+  }
+  margin: 2rem;
+`;
+
+const StyledSection = styled.section`
+  & > div {
+    margin: auto;
+    width: fit-content;
+    & > * {
+      margin: 0.25rem;
+    }
+  }
+`;

@@ -5,7 +5,7 @@ import useQuiz from "../hooks/useQuiz";
 const QuizPage = () => {
   const { categoryId } = useParams();
 
-  const { quiz, loading } = useQuiz(categoryId!, false);
+  const { quiz, loading } = useQuiz(categoryId!, categoryId == "random");
 
   return (
     <div>

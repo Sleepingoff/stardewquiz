@@ -2,7 +2,6 @@ import { MouseEventHandler, useEffect } from "react";
 import { Quiz } from "../../types";
 import AnswerCard from "../molecules/AnswerCard";
 import QuizCard from "../molecules/QuizCard";
-import Section from "../molecules/Section";
 interface QuizSectionProps {
   quizInfo: Quiz;
   onClick: MouseEventHandler;
@@ -13,7 +12,7 @@ const QuizSection = ({ quizInfo, onClick, onAnswer }: QuizSectionProps) => {
   useEffect(() => {}, []);
 
   return (
-    <Section>
+    <section>
       <QuizCard
         question={quizInfo.quiz}
         description={quizInfo.description}
@@ -23,7 +22,7 @@ const QuizSection = ({ quizInfo, onClick, onAnswer }: QuizSectionProps) => {
         }}
       />
       <AnswerCard onClick={onClick} onAnswer={onAnswer} />
-    </Section>
+    </section>
   );
 };
 

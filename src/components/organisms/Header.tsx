@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import Nav from "../molecules/Nav";
 import { useCategories } from "../../hooks/useCategories";
 import useScore from "../../hooks/useScore";
 import {
@@ -13,11 +12,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { useEffect } from "react";
-
+import Icon from "../molecules/Icon";
+import HomeIcon from "../../assets/Home.icon.svg";
 const Header = () => {
   const { pathname } = useLocation();
 
-  const { categories, loading, error } = useCategories();
+  const { categories } = useCategories();
   const { initializeUserCategories } = useScore();
   const auth = getAuth();
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Header = () => {
     if (!auth.currentUser) return;
     const user = auth.currentUser;
     const checkUser = async () => {
-      const userRef = doc(collection(db, "users"), user.uid); // Firestore의 `users` 컬렉션 참조
+      const userRef = doc(collection(db, "scores"), user.uid); // Firestore의 `users` 컬렉션 참조
       const result = await getDoc(userRef);
       return !result.exists();
     };
@@ -79,14 +79,7 @@ const Header = () => {
       {!auth.currentUser ? (
         <Button onClick={handleGoogleLogin}>LogIn</Button>
       ) : (
-        <Button onClick={handleClickConvert}>
-          {pathname == "/profile" ? "Home" : "My"}
-        </Button>
-      )}
-      {error ? (
-        <p>잠시 후 다시 시도해주세요!</p>
-      ) : (
-        <div>{!loading && <Nav categories={categories} />}</div>
+        <Icon onClick={handleClickConvert} src={HomeIcon} />
       )}
     </StyledHeader>
   );

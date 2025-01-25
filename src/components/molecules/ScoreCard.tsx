@@ -16,22 +16,49 @@ const ScoreCard = ({
   onClick,
   ...props
 }: ScoreCardProps) => {
+  const isCorrect = answer == correctAnswer;
   return (
     <StyledCard {...props}>
       <p>
-        당신의 답: <strong>{answer}</strong>
+        <span>{isCorrect && "굳!"}</span>
+        <span>{!isCorrect && "땡!"}</span>
       </p>
       <p>
-        정답: <strong>{correctAnswer}</strong>
+        Answer: <span>{correctAnswer}</span>{" "}
       </p>
       <p>
-        현재 점수: {score} / {total}
+        Your Answer: <span>{answer}</span>
       </p>
-      <Button onClick={onClick}>다음</Button>
+
+      <p>
+        Current Score:{" "}
+        <span>
+          <strong>{score} </strong>/ {total}
+        </span>
+      </p>
+      <Button onClick={onClick}>Next</Button>
     </StyledCard>
   );
 };
 
 export default ScoreCard;
 
-const StyledCard = styled.div``;
+const StyledCard = styled.div`
+  strong {
+    font-size: 2rem;
+  }
+
+  & > p:first-child,
+  & > p:last-child {
+    text-align: center;
+  }
+  & > :first-child > span:first-child {
+    color: green;
+    font-size: 2rem;
+  }
+
+  & > :first-child > span:last-child {
+    color: red;
+    font-size: 2rem;
+  }
+`;

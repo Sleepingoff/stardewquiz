@@ -6,7 +6,7 @@ export interface Category {
   mining: string;
 }
 export interface Score {
-  score: number;
+  solved: number;
   corrects: number;
 }
 
@@ -48,4 +48,10 @@ export interface TempQuiz {
   description: string;
   src: string;
   alt: string;
+}
+
+export interface Option {
+  defaultValue?: boolean;
+  value: string;
+  label: string;
 }

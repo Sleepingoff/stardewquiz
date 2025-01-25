@@ -5,6 +5,7 @@ import ResultPage from "../pages/Result";
 import ProfilePage from "../pages/Profile";
 import NewQuizPage from "../pages/New";
 import AdminPage from "../pages/Admin";
+import AdminDetailsPage from "../pages/AdminDetails";
 
 const routes: RouteObject[] = [
   {
@@ -32,6 +33,10 @@ const routes: RouteObject[] = [
   {
     path: "/admin",
     element: <AdminPage />,
+  },
+  {
+    path: "/admin/:quizId",
+    element: <AdminDetailsPage />,
   },
 ];
 

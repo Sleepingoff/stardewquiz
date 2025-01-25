@@ -1,20 +1,27 @@
-import Section from "../molecules/Section";
+import styled from "styled-components";
+
 interface ResultSectionProps {
   result: string;
+  total?: string;
 }
-const ResultSection = ({ result }: ResultSectionProps) => {
+const ResultSection = ({ result, total = "10" }: ResultSectionProps) => {
   return (
-    <Section>
-      {result ? (
-        <div>
-          <h2>퀴즈 결과</h2>
-          <p>{result}</p>
-        </div>
-      ) : (
-        <p>결과를 불러오는 중...</p>
-      )}
-    </Section>
+    <section>
+      <ResultDiv>
+        <h2>Latest Result</h2>
+        <p>
+          {result}/{total}
+        </p>
+      </ResultDiv>
+    </section>
   );
 };
 
 export default ResultSection;
+
+const ResultDiv = styled.div`
+  text-align: center;
+  & > p {
+    font-size: 2rem;
+  }
+`;

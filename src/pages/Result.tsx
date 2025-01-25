@@ -7,12 +7,12 @@ import useScore from "../hooks/useScore";
 const ResultPage = () => {
   const { categoryId } = useParams();
 
-  const [result, setResult] = useState<string>(""); // 결과 데이터를 저장
+  const [result, setResult] = useState<string>("0"); // 결과 데이터를 저장
   const auth = getAuth();
   const { getUserLatestScore } = useScore();
 
   useEffect(() => {
-    if (!categoryId) return;
+    if (!categoryId || categoryId == "random") return;
     const user = auth.currentUser;
 
     if (user) {

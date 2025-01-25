@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../atoms/Button";
 import ResultSection from "../organisms/ResultSection";
 import Layout from "./Layout";
+import QuizList from "../organisms/QuizList";
 
 interface ResultTempProps {
   currentCategory: string;
@@ -16,7 +17,10 @@ const ResultTemp = ({ currentCategory, result }: ResultTempProps) => {
     <Layout>
       <h3>{currentCategory}</h3>
       <ResultSection result={result} />
-      <Button onClick={handleClickStart}>Go!</Button>
+      <Button style={{ margin: "auto" }} onClick={handleClickStart}>
+        Go!
+      </Button>
+      <QuizList />
     </Layout>
   );
 };
