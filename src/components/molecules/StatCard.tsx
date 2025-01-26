@@ -13,7 +13,8 @@ const StatCard = ({ stats }: { stats: Stat }) => {
             Total Quiz: <span> {stats.totalQuiz || "000"}</span>
           </Box>
           <Box>
-            Average Score:<span> {stats.averageScore || "000"}</span>
+            Average Score:
+            <span> {Math.round(stats.averageScore) || "000"}</span>
           </Box>
         </StyledDiv>
       </section>
@@ -50,6 +51,10 @@ const StyledSection = styled.section`
 
 const StyledDiv = styled.div`
   display: flex;
+
+  & > *:last-child {
+    flex-grow: 1;
+  }
 `;
 
 const StyledLi = styled.li`

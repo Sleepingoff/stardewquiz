@@ -21,7 +21,7 @@ const CustomSelect = ({
   onChange,
   placeholder = "Select an option",
   localKey,
-  direction = "bottom",
+  direction = "top",
 }: CustomSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string>(
@@ -60,7 +60,7 @@ const CustomSelect = ({
 
       {/* Dropdown Options */}
       {isOpen && (
-        <StyledUlist style={{ [direction]: "-100%" }}>
+        <StyledUlist style={{ [direction]: "100%" }}>
           {options.map((option) => (
             <li
               key={option.value}

@@ -6,9 +6,10 @@ import {
   setDoc,
   collection,
   Timestamp,
+  runTransaction,
 } from "firebase/firestore";
 import { db } from "../firebase.config";
-import { Category, Score } from "../types";
+import { Category, Score, TempQuiz } from "../types";
 
 const useScore = () => {
   const initializeUserCategories = async (
@@ -84,19 +85,54 @@ const useScore = () => {
 
   const updateUserScore = async (
     userId: string,
-    category: string,
-    newScore: number,
-    total: number
+    quiz: TempQuiz,
+    incrementScore: number,
+    incrementTotal: number,
+    isFinalUpdate: boolean = false // 최종 업데이트 여부
   ) => {
     const userScoreRef = doc(collection(db, "scores"), userId);
 
-    const newData = { corrects: newScore, solved: total };
-
     try {
-      await updateDoc(userScoreRef, {
-        [`categories.${category}.latest`]: newData, // 최신 데이터 업데이트
-        [`categories.${category}.history`]: arrayUnion(newData), // 히스토리 추가
-        lastUpdated: new Date().toISOString(), // 마지막 업데이트 시간 갱신
+      await runTransaction(db, async (transaction) => {
+        const docSnapshot = await transaction.get(userScoreRef);
+
+        if (!docSnapshot.exists()) {
+          // 유저 데이터가 없으면 초기화
+          transaction.set(userScoreRef, {
+            categories: {
+              [quiz.categoryId]: {
+                latest: { corrects: 0, solved: 0 },
+                history: [],
+              },
+            },
+            lastUpdated: new Date().toISOString(),
+          });
+        }
+
+        const userData = docSnapshot.data();
+        const currentCategory = userData?.categories?.[quiz.categoryId] || {
+          latest: { corrects: 0, solved: 0 },
+          history: [],
+        };
+
+        const updatedLatest = {
+          corrects: currentCategory.latest.corrects + incrementScore,
+          solved: currentCategory.latest.solved + 1,
+        };
+
+        // 항상 최신 데이터를 업데이트
+        transaction.update(userScoreRef, {
+          [`categories.${quiz.categoryId}.latest`]: updatedLatest,
+          lastUpdated: new Date().toISOString(),
+        });
+
+        // `isFinalUpdate`가 true인 경우에만 히스토리를 추가
+        if (isFinalUpdate) {
+          transaction.update(userScoreRef, {
+            [`categories.${quiz.categoryId}.history`]:
+              arrayUnion(updatedLatest),
+          });
+        }
       });
     } catch (error) {
       console.error("Error updating score:", error);

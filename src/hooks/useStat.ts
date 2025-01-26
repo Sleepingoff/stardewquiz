@@ -33,18 +33,18 @@ const useStat = (userId: string | undefined) => {
       ([category, details]: [string, { history: Score[]; latest: Score }]) => {
         const history = details.history;
         const categoryTotalScore = history.reduce(
-          (a, { solved }) => a + solved,
+          (a, { corrects }) => a + corrects,
           0
         );
-
-        totalQuiz += history.length;
+        const total = history.reduce((a, { solved }) => a + solved, 0);
+        totalQuiz += total;
         totalScore += categoryTotalScore;
         categoryScores[category] = categoryTotalScore; // 누적 점수 저장
       }
     );
 
-    const averageScore = totalQuiz > 0 ? totalScore / totalQuiz : 0;
-
+    const averageScore =
+      totalQuiz > 0 ? totalScore / Object.keys(categories).length : 0;
     return {
       totalQuiz,
       averageScore,

@@ -3,9 +3,9 @@ import { useCategories } from "../../hooks/useCategories";
 import useScore from "../../hooks/useScore";
 import {
   getAuth,
-  signInWithPopup,
   GoogleAuthProvider,
   User,
+  signInWithPopup,
 } from "firebase/auth";
 import Button from "../atoms/Button";
 import { useLocation, useNavigate } from "react-router-dom";

@@ -6,7 +6,6 @@ import { TempQuiz } from "../types";
 
 const useQuiz = (categoryId: string, random?: boolean, all?: boolean) => {
   const [quiz, setQuiz] = useState<TempQuiz[]>([]); // 전체 퀴즈 리스트
-  const [selectedQuiz, setSelectedQuiz] = useState<TempQuiz | null>(null); // 선택된 랜덤 퀴즈
   const { language } = useLanguage(); // 전역 언어 설정 가져오기
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -54,13 +53,25 @@ const useQuiz = (categoryId: string, random?: boolean, all?: boolean) => {
         console.log(`No data found for category: ${categoryId}`);
         return [];
       }
-      const randomCategoryId =
-        Object.keys(data)[Math.floor(Math.random() * Object.keys(data).length)];
-      const randomQuiz = Object.values(data[randomCategoryId])[
-        Math.floor(Math.random() * data.length)
-      ] as TempQuiz;
-      setSelectedQuiz(randomQuiz);
-      return randomQuiz;
+      // 모든 퀴즈 데이터를 메모리에 로드
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const quizzes = Object.entries(data).flatMap(([_, categoryQuizzes]) =>
+        Object.values(categoryQuizzes)
+      ) as TempQuiz[];
+
+      // 랜덤하게 10개의 퀴즈 선택
+      const randomQuizzes = [];
+      const usedIndexes = new Set<number>();
+      while (randomQuizzes.length < 10 && usedIndexes.size < quizzes.length) {
+        const randomIndex = Math.floor(Math.random() * quizzes.length);
+        if (!usedIndexes.has(randomIndex)) {
+          randomQuizzes.push(quizzes[randomIndex]);
+          usedIndexes.add(randomIndex);
+        }
+      }
+
+      setQuiz(randomQuizzes);
+      return randomQuizzes;
     } catch (error) {
       console.error("Failed to fetch a random quiz by language:", error);
       throw error;
@@ -96,7 +107,6 @@ const useQuiz = (categoryId: string, random?: boolean, all?: boolean) => {
     quiz,
     loading,
     error,
-    selectedQuiz,
     getQuizByCategoryId,
     getRandomQuiz,
     setQuizWithCategoryName,

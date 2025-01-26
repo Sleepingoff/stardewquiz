@@ -9,7 +9,7 @@ const Footer = ({ ...props }: HTMLAttributes<HTMLDivElement>) => {
   return (
     <StyledFooter {...props}>
       <CustomSelect
-        direction="top"
+        direction="bottom"
         options={[
           { value: "ko", label: "한국어", defaultValue: language === "ko" },
           { value: "en", label: "English", defaultValue: language === "en" },

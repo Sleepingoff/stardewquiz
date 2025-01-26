@@ -9,13 +9,7 @@ const QuizPage = () => {
 
   return (
     <div>
-      {!loading && (
-        <QuizTemp
-          currentCategory={categoryId ?? ""}
-          quiz={quiz}
-          total={quiz.length}
-        ></QuizTemp>
-      )}
+      {!loading && <QuizTemp quiz={quiz} total={quiz.length}></QuizTemp>}
     </div>
   );
 };

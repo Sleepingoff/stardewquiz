@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
 import { Category, TempQuiz } from "../../types";
@@ -15,6 +15,8 @@ const TempQuizTable = () => {
   const [quiz, setQuiz] = useState<TempQuiz | null>(null);
   const [language, setLanguage] = useState("ko");
   const { setQuizWithCategoryName } = useQuiz(quiz?.categoryId ?? "");
+
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
@@ -43,16 +45,20 @@ const TempQuizTable = () => {
     try {
       const quizRef = doc(collection(db, "tempQuiz"), quizId);
       await updateDoc(quizRef, { ...quiz });
+      updateStatus("rejected");
       alert("Quiz updated successfully!");
     } catch (error) {
       console.error("Error updating quiz:", error);
     }
   };
+
   const saveQuiz = async () => {
     if (!quiz) return;
     try {
       await setQuizWithCategoryName(quiz);
+      updateStatus("approved");
       alert("Quiz updated successfully!");
+      navigate("/admin", { state: true });
     } catch (error) {
       console.error("Error updating quiz:", error);
     }
@@ -139,20 +145,7 @@ const TempQuizTable = () => {
           justifyContent: "space-around",
           alignItems: "center",
         }}
-      >
-        <span>사용자에게 알려주기</span>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-around",
-            alignItems: "center",
-            gap: "4px",
-          }}
-        >
-          <Button onClick={() => updateStatus("approved")}>승인</Button>
-          <Button onClick={() => updateStatus("rejected")}>거절</Button>
-        </div>
-      </div>
+      ></div>
     </div>
   );
 };
